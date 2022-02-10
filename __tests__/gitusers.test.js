@@ -35,6 +35,21 @@ describe('backend routes', () => {
       exp: expect.any(Number),
     });
   });
+
+  it('should allow logged in user to create a post', async () => {
+    await agent.get('/api/v1/github/login/callback?code=42')
+      .redirects(1);
+
+    const res = await agent.post('/api/v1/posts').send({
+      text: 'odoyle rules',
+    });
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      userId: expect.any(String),
+      text: 'odoyle rules',
+    });
+  });
+
   it('should logout user', async () => {
     const res = await agent.delete('/api/v1/github/sessions').send({
       id: expect.any(String),
