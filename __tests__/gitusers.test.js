@@ -50,6 +50,21 @@ describe('backend routes', () => {
     });
   });
 
+  it('should give logged in user a list of posts', async () => {
+    await agent.get('/api/v1/github/login/callback?code=42');
+
+    await agent.post('/api/v1/posts').send({
+      text: 'odoyle rules',
+    });
+    const res = await agent.get('/api/v1/posts');
+
+    expect(res.body).toEqual([{
+      id: expect.any(String),
+      userId: expect.any(String),
+      text: 'odoyle rules',
+    }]);
+  });
+
   it('should logout user', async () => {
     const res = await agent.delete('/api/v1/github/sessions').send({
       id: expect.any(String),
